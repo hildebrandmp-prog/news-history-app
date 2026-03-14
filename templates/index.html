@@ -6,29 +6,37 @@
     <title>🌍 World News + History</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', sans-serif; background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460); min-height: 100vh; color: #eee; }
-        header { background: rgba(255,255,255,0.05); padding: 20px 40px; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: space-between; }
+        body { font-family: 'Segoe UI', sans-serif; background: #0f1117; min-height: 100vh; color: #eee; }
+        header { background: linear-gradient(135deg, #1a1a2e, #16213e); padding: 20px 40px; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: space-between; }
         header h1 { font-size: 1.8rem; color: #e94560; }
         header p { color: #aaa; font-size: 0.9rem; }
-        .controls { padding: 30px 40px 10px; display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
-        .region-btn { padding: 10px 20px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); color: #eee; border-radius: 25px; cursor: pointer; font-size: 0.9rem; transition: all 0.3s; }
+        .controls { padding: 25px 40px; display: flex; gap: 12px; flex-wrap: wrap; align-items: center; background: #1a1d27; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .region-btn { padding: 8px 18px; border: 1px solid rgba(255,255,255,0.2); background: transparent; color: #eee; border-radius: 20px; cursor: pointer; font-size: 0.85rem; transition: all 0.3s; }
         .region-btn:hover, .region-btn.active { background: #e94560; border-color: #e94560; }
-        .refresh-btn { padding: 10px 25px; background: #e94560; border: none; color: white; border-radius: 25px; cursor: pointer; font-size: 0.9rem; font-weight: bold; margin-left: auto; }
+        .refresh-btn { padding: 10px 25px; background: #e94560; border: none; color: white; border-radius: 20px; cursor: pointer; font-weight: bold; margin-left: auto; }
         .refresh-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-        .main { padding: 20px 40px 40px; }
-        .loading { text-align: center; padding: 60px; display: none; }
+        .main { padding: 30px 40px; max-width: 1200px; margin: 0 auto; }
+        .loading { text-align: center; padding: 80px; display: none; }
         .spinner { width: 50px; height: 50px; border: 4px solid rgba(255,255,255,0.1); border-top-color: #e94560; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 20px; }
         @keyframes spin { to { transform: rotate(360deg); } }
-        .content-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
-        .card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 15px; padding: 25px; }
-        .card h2 { font-size: 1.1rem; color: #e94560; margin-bottom: 15px; }
-        .news-list { display: flex; flex-direction: column; gap: 12px; }
-        .news-item { padding: 12px 15px; background: rgba(255,255,255,0.03); border-left: 3px solid #e94560; border-radius: 0 8px 8px 0; }
-        .news-item a { color: #53d8fb; text-decoration: none; font-size: 0.9rem; font-weight: 500; }
-        .news-item .date { color: #888; font-size: 0.75rem; margin-top: 4px; }
-        .analysis-card { grid-column: 1 / -1; }
-        .analysis-content { line-height: 1.8; color: #ddd; font-size: 0.95rem; white-space: pre-wrap; }
-        .error-msg { text-align: center; padding: 40px; color: #e94560; }
+        .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 25px; }
+        .card { background: #1a1d27; border-radius: 16px; overflow: hidden; border: 1px solid rgba(255,255,255,0.08); transition: transform 0.2s; }
+        .card:hover { transform: translateY(-4px); }
+        .card-image { width: 100%; height: 200px; object-fit: cover; background: #2a2d3a; }
+        .card-image-placeholder { width: 100%; height: 200px; background: linear-gradient(135deg, #1e2a3a, #2a1e3a); display: flex; align-items: center; justify-content: center; font-size: 3rem; }
+        .card-body { padding: 20px; }
+        .card-title { font-size: 1rem; font-weight: 600; margin-bottom: 8px; line-height: 1.4; }
+        .card-title a { color: #53d8fb; text-decoration: none; }
+        .card-title a:hover { color: #e94560; }
+        .card-summary { font-size: 0.85rem; color: #999; line-height: 1.5; margin-bottom: 15px; }
+        .card-date { font-size: 0.75rem; color: #666; margin-bottom: 15px; }
+        .history-section { background: rgba(233,69,96,0.08); border-left: 3px solid #e94560; border-radius: 0 8px 8px 0; padding: 12px 15px; margin-top: 15px; }
+        .history-title { font-size: 0.75rem; font-weight: bold; color: #e94560; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+        .history-text { font-size: 0.85rem; color: #ccc; line-height: 1.6; }
+        .lesson-section { background: rgba(83,216,251,0.08); border-left: 3px solid #53d8fb; border-radius: 0 8px 8px 0; padding: 10px 15px; margin-top: 10px; }
+        .lesson-title { font-size: 0.75rem; font-weight: bold; color: #53d8fb; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+        .lesson-text { font-size: 0.82rem; color: #bbb; line-height: 1.5; font-style: italic; }
+        .error-msg { text-align: center; padding: 60px; color: #e94560; font-size: 1.1rem; }
     </style>
 </head>
 <body>
@@ -43,7 +51,7 @@
     {% for region in regions %}
     <button class="region-btn {% if loop.first %}active{% endif %}" onclick="loadNews('{{ region }}', this)">{{ region }}</button>
     {% endfor %}
-    <button class="refresh-btn" id="refreshBtn" onclick="refreshNews()">🔄 Load News</button>
+    <button class="refresh-btn" id="refreshBtn" onclick="refreshNews()">🔄 Refresh</button>
 </div>
 <div class="main">
     <div class="loading" id="loading">
@@ -51,7 +59,7 @@
         <p>Fetching news & analyzing history... ⏳</p>
         <p style="font-size:0.85rem; margin-top:8px; color:#666;">This takes about 15-20 seconds</p>
     </div>
-    <div id="content"></div>
+    <div class="cards-grid" id="content"></div>
 </div>
 <script>
     let currentRegion = "World";
@@ -77,10 +85,17 @@
                 btn.disabled = false;
                 btn.textContent = '🔄 Refresh';
                 if (data.error) { content.innerHTML = `<div class="error-msg">❌ ${data.error}</div>`; return; }
-                let html = `<div class="content-grid"><div class="card"><h2>📰 Latest Headlines</h2><div class="news-list">`;
-                data.articles.forEach(a => { html += `<div class="news-item"><a href="${a.link}" target="_blank">${a.title}</a><div class="date">📅 ${a.published || 'Recent'}</div></div>`; });
-                html += `</div></div><div class="card analysis-card"><h2>🧠 Summary + Historical Context</h2><div class="analysis-content">${data.analysis}</div></div></div>`;
-                content.innerHTML = html;
+                content.innerHTML = data.articles.map(a => `
+                    <div class="card">
+                        ${a.image ? `<img class="card-image" src="${a.image}" alt="${a.title}" onerror="this.style.display='none'">` : `<div class="card-image-placeholder">🌍</div>`}
+                        <div class="card-body">
+                            <div class="card-date">📅 ${a.published || 'Recent'}</div>
+                            <div class="card-title"><a href="${a.link}" target="_blank">${a.title}</a></div>
+                            <div class="card-summary">${a.summary}</div>
+                            ${a.historical ? `<div class="history-section"><div class="history-title">📜 Historical Context</div><div class="history-text">${a.historical}</div></div>` : ''}
+                            ${a.lesson ? `<div class="lesson-section"><div class="lesson-title">💡 Lesson from History</div><div class="lesson-text">${a.lesson}</div></div>` : ''}
+                        </div>
+                    </div>`).join('');
             })
             .catch(() => { loading.style.display = 'none'; btn.disabled = false; btn.textContent = '🔄 Refresh'; content.innerHTML = `<div class="error-msg">❌ Connection error</div>`; });
     }
