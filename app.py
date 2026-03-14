@@ -40,7 +40,7 @@ def get_news(region, lang):
     url = feeds.get(region, feeds[default])
     feed = feedparser.parse(url)
     articles = []
-    for entry in feed.entries[:5]:
+    for entry in feed.entries[:3]:
         articles.append({
             "title": entry.get("title", ""),
             "summary": entry.get("summary", ""),
@@ -88,7 +88,7 @@ NEWS ARTICLES:
 
     message = client.messages.create(
         model="claude-haiku-4-5-20251001",
-        max_tokens=3000,
+        max_tokens=1500,
         messages=[{"role": "user", "content": prompt}]
     )
     try:
