@@ -13,46 +13,46 @@
         .controls { padding: 20px 40px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; background: #1a1d27; border-bottom: 1px solid rgba(255,255,255,0.05); }
         .region-btn { padding: 8px 18px; border: 1px solid rgba(255,255,255,0.2); background: transparent; color: #eee; border-radius: 20px; cursor: pointer; font-size: 0.85rem; transition: all 0.3s; }
         .region-btn:hover, .region-btn.active { background: #e94560; border-color: #e94560; }
-        .refresh-btn { padding: 10px 25px; background: #e94560; border: none; color: white; border-radius: 20px; cursor: pointer; font-weight: bold; margin-left: auto; }
+        .refresh-btn { padding: 10px 25px; background: #e94560; border: none; color: white; border-radius: 20px; cursor: pointer; font-weight: bold; }
         .refresh-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-        .mode-toggle { display: flex; gap: 0; background: rgba(255,255,255,0.05); border-radius: 25px; padding: 4px; margin: 0 10px; }
-        .mode-btn { padding: 8px 20px; border: none; background: transparent; color: #aaa; border-radius: 20px; cursor: pointer; font-size: 0.85rem; font-weight: 500; transition: all 0.3s; }
-        .mode-btn.active { background: #e94560; color: white; }
-        .kids-mode .mode-btn.kids { background: #f59e0b; color: white; }
+        .toggle-group { display: flex; gap: 0; background: rgba(255,255,255,0.05); border-radius: 25px; padding: 4px; }
+        .toggle-btn { padding: 7px 16px; border: none; background: transparent; color: #aaa; border-radius: 20px; cursor: pointer; font-size: 0.82rem; font-weight: 500; transition: all 0.3s; }
+        .toggle-btn.active { background: #e94560; color: white; }
+        .toggle-btn.kids-active { background: #f59e0b; color: white; }
+        .toggle-btn.lang-active { background: #3b82f6; color: white; }
         .main { padding: 30px 40px; max-width: 1200px; margin: 0 auto; }
         .loading { text-align: center; padding: 80px; display: none; }
         .spinner { width: 50px; height: 50px; border: 4px solid rgba(255,255,255,0.1); border-top-color: #e94560; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 20px; }
-        .kids-spinner { border-top-color: #f59e0b; }
         @keyframes spin { to { transform: rotate(360deg); } }
+        .kids-banner { background: linear-gradient(135deg, #f59e0b22, #f59e0b11); border: 1px solid rgba(245,158,11,0.3); border-radius: 12px; padding: 15px 20px; margin-bottom: 25px; display: none; align-items: center; gap: 15px; }
+        .kids-banner.show { display: flex; }
         .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 25px; }
         .card { background: #1a1d27; border-radius: 16px; overflow: hidden; border: 1px solid rgba(255,255,255,0.08); transition: transform 0.2s; }
         .card:hover { transform: translateY(-4px); }
-        .card.kids-card { border-color: rgba(245,158,11,0.3); background: #1a1d27; }
+        .card.kids-card { border-color: rgba(245,158,11,0.3); }
         .card-image { width: 100%; height: 200px; object-fit: cover; }
         .card-image-placeholder { width: 100%; height: 200px; background: linear-gradient(135deg, #1e2a3a, #2a1e3a); display: flex; align-items: center; justify-content: center; font-size: 3rem; }
-        .kids-card .card-image-placeholder { background: linear-gradient(135deg, #2a1e0a, #1e2a0a); }
         .card-body { padding: 20px; }
         .card-date { font-size: 0.75rem; color: #666; margin-bottom: 8px; }
         .card-title { font-size: 1rem; font-weight: 600; margin-bottom: 8px; line-height: 1.4; }
         .card-title a { color: #53d8fb; text-decoration: none; }
         .card-title a:hover { color: #e94560; }
         .card-summary { font-size: 0.85rem; color: #999; line-height: 1.5; margin-bottom: 12px; }
-        .history-section { background: rgba(233,69,96,0.08); border-left: 3px solid #e94560; border-radius: 0 8px 8px 0; padding: 12px 15px; margin-top: 12px; }
-        .history-title { font-size: 0.72rem; font-weight: bold; color: #e94560; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
-        .history-text { font-size: 0.85rem; color: #ccc; line-height: 1.6; }
-        .lesson-section { background: rgba(83,216,251,0.08); border-left: 3px solid #53d8fb; border-radius: 0 8px 8px 0; padding: 10px 15px; margin-top: 8px; }
-        .lesson-title { font-size: 0.72rem; font-weight: bold; color: #53d8fb; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
-        .lesson-text { font-size: 0.82rem; color: #bbb; line-height: 1.5; font-style: italic; }
-        .kids-section { background: rgba(245,158,11,0.08); border-left: 3px solid #f59e0b; border-radius: 0 8px 8px 0; padding: 12px 15px; margin-top: 12px; }
-        .kids-title { font-size: 0.72rem; font-weight: bold; color: #f59e0b; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
-        .kids-text { font-size: 0.9rem; color: #ddd; line-height: 1.7; }
-        .kids-fact { background: rgba(74,222,128,0.08); border-left: 3px solid #4ade80; border-radius: 0 8px 8px 0; padding: 10px 15px; margin-top: 8px; }
-        .kids-fact-title { font-size: 0.72rem; font-weight: bold; color: #4ade80; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
-        .kids-fact-text { font-size: 0.85rem; color: #bbb; line-height: 1.5; }
-        .kids-banner { background: linear-gradient(135deg, #f59e0b22, #f59e0b11); border: 1px solid rgba(245,158,11,0.3); border-radius: 12px; padding: 15px 20px; margin-bottom: 25px; display: none; align-items: center; gap: 15px; }
-        .kids-banner.show { display: flex; }
-        .kids-banner-text { font-size: 1rem; color: #f59e0b; font-weight: 500; }
-        .kids-banner-sub { font-size: 0.85rem; color: #aaa; margin-top: 3px; }
+        .section-box { border-radius: 0 8px 8px 0; padding: 12px 15px; margin-top: 10px; }
+        .section-label { font-size: 0.72rem; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+        .section-text { font-size: 0.85rem; line-height: 1.6; }
+        .history-box { background: rgba(233,69,96,0.08); border-left: 3px solid #e94560; }
+        .history-box .section-label { color: #e94560; }
+        .history-box .section-text { color: #ccc; }
+        .lesson-box { background: rgba(83,216,251,0.08); border-left: 3px solid #53d8fb; }
+        .lesson-box .section-label { color: #53d8fb; }
+        .lesson-box .section-text { color: #bbb; font-style: italic; }
+        .kids-box { background: rgba(245,158,11,0.08); border-left: 3px solid #f59e0b; }
+        .kids-box .section-label { color: #f59e0b; }
+        .kids-box .section-text { color: #ddd; }
+        .fact-box { background: rgba(74,222,128,0.08); border-left: 3px solid #4ade80; }
+        .fact-box .section-label { color: #4ade80; }
+        .fact-box .section-text { color: #bbb; }
         .error-msg { text-align: center; padding: 60px; color: #e94560; font-size: 1.1rem; }
     </style>
 </head>
@@ -60,46 +60,99 @@
 <header>
     <div>
         <h1>🌍 World News + History</h1>
-        <p>Stay informed — understand the past behind today's events</p>
+        <p id="headerSub">Stay informed — understand the past behind today's events</p>
     </div>
     <div style="color:#888; font-size:0.85rem;">Powered by Claude AI 🤖</div>
 </header>
 <div class="controls">
-    {% for region in regions %}
-    <button class="region-btn {% if loop.first %}active{% endif %}" onclick="loadNews('{{ region }}', this)">{{ region }}</button>
-    {% endfor %}
-    <div class="mode-toggle">
-        <button class="mode-btn active" id="adultBtn" onclick="setMode('adult')">👤 Adult</button>
-        <button class="mode-btn" id="kidsBtn" onclick="setMode('kids')">🧒 Kids</button>
+    <div id="regionBtns" style="display:flex; gap:10px; flex-wrap:wrap;"></div>
+    <div class="toggle-group" style="margin-left:auto;">
+        <button class="toggle-btn active" id="adultBtn" onclick="setMode('adult')">👤 <span id="adultLabel">Adult</span></button>
+        <button class="toggle-btn" id="kidsBtn" onclick="setMode('kids')">🧒 <span id="kidsLabel">Kids</span></button>
     </div>
-    <button class="refresh-btn" id="refreshBtn" onclick="refreshNews()">🔄 Refresh</button>
+    <div class="toggle-group">
+        <button class="toggle-btn lang-active" id="enBtn" onclick="setLang('en')">🇬🇧 EN</button>
+        <button class="toggle-btn" id="frBtn" onclick="setLang('fr')">🇫🇷 FR</button>
+    </div>
+    <button class="refresh-btn" id="refreshBtn" onclick="refreshNews()">🔄</button>
 </div>
 <div class="main">
     <div class="kids-banner" id="kidsBanner">
         <span style="font-size:2rem;">🧒</span>
         <div>
-            <div class="kids-banner-text">Kids Mode is ON! 🌟</div>
-            <div class="kids-banner-sub">News explained in a fun and friendly way for 10 year olds — no scary stuff!</div>
+            <div style="color:#f59e0b; font-weight:500; font-size:1rem;" id="kidsTitle">Kids Mode is ON! 🌟</div>
+            <div style="color:#aaa; font-size:0.85rem; margin-top:3px;" id="kidsSub">News explained in a fun and friendly way — no scary stuff!</div>
         </div>
     </div>
     <div class="loading" id="loading">
-        <div class="spinner" id="spinner"></div>
+        <div class="spinner"></div>
         <p id="loadingText">Fetching news & analyzing history... ⏳</p>
-        <p style="font-size:0.85rem; margin-top:8px; color:#666;">This takes about 15-20 seconds</p>
+        <p style="font-size:0.85rem; margin-top:8px; color:#666;">~15-20 seconds</p>
     </div>
     <div class="cards-grid" id="content"></div>
 </div>
 <script>
-    let currentRegion = "World";
+    let currentRegion = null;
     let currentMode = "adult";
+    let currentLang = "en";
     let currentData = null;
+
+    const regions = {
+        en: ["World","Europe","Middle East","Asia","Americas","Africa"],
+        fr: ["Monde","Europe","Moyen-Orient","Asie","Amériques","Afrique"]
+    };
+
+    const labels = {
+        en: {
+            adult: "Adult", kids: "Kids",
+            headerSub: "Stay informed — understand the past behind today's events",
+            loading: "Fetching news & analyzing history... ⏳",
+            kidsTitle: "Kids Mode is ON! 🌟",
+            kidsSub: "News explained in a fun and friendly way — no scary stuff!",
+            histLabel: "📜 Historical Context", lessonLabel: "💡 Lesson from History",
+            kidsLabel: "🧒 For Kids", factLabel: "⭐ Fun Fact!"
+        },
+        fr: {
+            adult: "Adulte", kids: "Enfants",
+            headerSub: "Restez informé — comprenez le passé derrière les événements d'aujourd'hui",
+            loading: "Chargement des actualités... ⏳",
+            kidsTitle: "Mode Enfants activé! 🌟",
+            kidsSub: "L'actualité expliquée de façon fun et sans rien d'effrayant!",
+            histLabel: "📜 Contexte Historique", lessonLabel: "💡 Leçon de l'Histoire",
+            kidsLabel: "🧒 Pour les Enfants", factLabel: "⭐ Le Savais-tu?"
+        }
+    };
+
+    function buildRegionBtns() {
+        const container = document.getElementById('regionBtns');
+        const list = regions[currentLang];
+        container.innerHTML = list.map((r, i) =>
+            `<button class="region-btn ${i===0?'active':''}" onclick="loadNews('${r}', this)">${r}</button>`
+        ).join('');
+        currentRegion = list[0];
+    }
+
+    function setLang(lang) {
+        currentLang = lang;
+        document.getElementById('enBtn').classList.toggle('lang-active', lang==='en');
+        document.getElementById('frBtn').classList.toggle('lang-active', lang==='fr');
+        const L = labels[lang];
+        document.getElementById('headerSub').textContent = L.headerSub;
+        document.getElementById('adultLabel').textContent = L.adult;
+        document.getElementById('kidsLabel').textContent = L.kids;
+        document.getElementById('kidsTitle').textContent = L.kidsTitle;
+        document.getElementById('kidsSub').textContent = L.kidsSub;
+        buildRegionBtns();
+        fetchNews();
+    }
 
     function setMode(mode) {
         currentMode = mode;
-        document.getElementById('adultBtn').classList.toggle('active', mode === 'adult');
-        document.getElementById('kidsBtn').classList.toggle('active', mode === 'kids');
-        document.getElementById('kidsBanner').classList.toggle('show', mode === 'kids');
-        document.getElementById('spinner').className = mode === 'kids' ? 'spinner kids-spinner' : 'spinner';
+        document.getElementById('adultBtn').classList.toggle('active', mode==='adult');
+        document.getElementById('kidsBtn').classList.toggle('kids-active', mode==='kids');
+        document.getElementById('kidsBtn').classList.toggle('active', false);
+        document.getElementById('adultBtn').classList.toggle('kids-active', false);
+        document.getElementById('kidsBanner').classList.toggle('show', mode==='kids');
         if (currentData) renderCards(currentData);
     }
 
@@ -119,15 +172,12 @@
         loading.style.display = 'block';
         content.innerHTML = '';
         btn.disabled = true;
-        btn.textContent = '⏳ Loading...';
-        document.getElementById('loadingText').textContent = currentMode === 'kids'
-            ? 'Getting news ready for you... 🌟' : 'Fetching news & analyzing history... ⏳';
-        fetch(`/api/news?region=${currentRegion}`)
+        document.getElementById('loadingText').textContent = labels[currentLang].loading;
+        fetch(`/api/news?region=${currentRegion}&lang=${currentLang}`)
             .then(r => r.json())
             .then(data => {
                 loading.style.display = 'none';
                 btn.disabled = false;
-                btn.textContent = '🔄 Refresh';
                 if (data.error) { content.innerHTML = `<div class="error-msg">❌ ${data.error}</div>`; return; }
                 currentData = data;
                 renderCards(data);
@@ -135,7 +185,6 @@
             .catch(() => {
                 loading.style.display = 'none';
                 btn.disabled = false;
-                btn.textContent = '🔄 Refresh';
                 content.innerHTML = `<div class="error-msg">❌ Connection error</div>`;
             });
     }
@@ -143,6 +192,7 @@
     function renderCards(data) {
         const content = document.getElementById('content');
         const isKids = currentMode === 'kids';
+        const L = labels[currentLang];
         content.innerHTML = data.articles.map(a => `
             <div class="card ${isKids ? 'kids-card' : ''}">
                 ${a.image
@@ -153,33 +203,17 @@
                     <div class="card-title"><a href="${a.link}" target="_blank">${a.title}</a></div>
                     <div class="card-summary">${a.summary}</div>
                     ${isKids ? `
-                        ${a.kids_explanation ? `
-                        <div class="kids-section">
-                            <div class="kids-title">🧒 For Kids</div>
-                            <div class="kids-text">${a.kids_explanation}</div>
-                        </div>` : ''}
-                        ${a.kids_fun_fact ? `
-                        <div class="kids-fact">
-                            <div class="kids-fact-title">⭐ Fun Fact!</div>
-                            <div class="kids-fact-text">${a.kids_fun_fact}</div>
-                        </div>` : ''}
+                        ${a.kids_explanation ? `<div class="section-box kids-box"><div class="section-label">${L.kidsLabel}</div><div class="section-text">${a.kids_explanation}</div></div>` : ''}
+                        ${a.kids_fun_fact ? `<div class="section-box fact-box"><div class="section-label">${L.factLabel}</div><div class="section-text">${a.kids_fun_fact}</div></div>` : ''}
                     ` : `
-                        ${a.historical ? `
-                        <div class="history-section">
-                            <div class="history-title">📜 Historical Context</div>
-                            <div class="history-text">${a.historical}</div>
-                        </div>` : ''}
-                        ${a.lesson ? `
-                        <div class="lesson-section">
-                            <div class="lesson-title">💡 Lesson from History</div>
-                            <div class="lesson-text">${a.lesson}</div>
-                        </div>` : ''}
+                        ${a.historical ? `<div class="section-box history-box"><div class="section-label">${L.histLabel}</div><div class="section-text">${a.historical}</div></div>` : ''}
+                        ${a.lesson ? `<div class="section-box lesson-box"><div class="section-label">${L.lessonLabel}</div><div class="section-text">${a.lesson}</div></div>` : ''}
                     `}
                 </div>
             </div>`).join('');
     }
 
-    window.onload = () => fetchNews();
+    window.onload = () => { buildRegionBtns(); fetchNews(); };
 </script>
 </body>
 </html>
