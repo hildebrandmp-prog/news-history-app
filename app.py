@@ -46,14 +46,16 @@ def analyze_with_claude(articles):
     news_text = "\n\n".join([f"ARTICLE {i}:\nTITLE: {a['title']}\nSUMMARY: {a['summary']}" for i, a in enumerate(articles)])
     message = client.messages.create(
         model="claude-haiku-4-5-20251001",
-        max_tokens=2000,
-        messages=[{"role": "user", "content": f"""For each news article, give a historical context analysis.
+        max_tokens=3000,
+        messages=[{"role": "user", "content": f"""For each news article, provide two analyses.
 Return ONLY a valid JSON array with exactly {len(articles)} objects:
 [
   {{
     "index": 0,
-    "historical": "2-3 sentences connecting this to a historical event or context",
-    "lesson": "1 sentence on what history teaches us about this"
+    "historical": "2-3 sentences connecting this to a historical event",
+    "lesson": "1 sentence on what history teaches us about this",
+    "kids_explanation": "Explain this news in 2-3 fun simple sentences for a 10 year old. Use a friendly tone, simple words, a fun emoji, and NO scary or violent details. Focus on the positive or interesting angle.",
+    "kids_fun_fact": "1 fun related fact a kid would find cool or interesting"
   }}
 ]
 NEWS ARTICLES:
@@ -83,9 +85,13 @@ def api_news():
         if analyses and i < len(analyses):
             article['historical'] = analyses[i].get('historical', '')
             article['lesson'] = analyses[i].get('lesson', '')
+            article['kids_explanation'] = analyses[i].get('kids_explanation', '')
+            article['kids_fun_fact'] = analyses[i].get('kids_fun_fact', '')
         else:
             article['historical'] = ''
             article['lesson'] = ''
+            article['kids_explanation'] = ''
+            article['kids_fun_fact'] = ''
     return jsonify({"articles": articles, "region": region})
 
 if __name__ == "__main__":
