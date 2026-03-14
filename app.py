@@ -7,12 +7,22 @@ import json
 app = Flask(__name__)
 
 RSS_FEEDS = {
-    "World": "https://feeds.bbci.co.uk/news/world/rss.xml",
-    "Europe": "https://feeds.bbci.co.uk/news/world/europe/rss.xml",
-    "Middle East": "https://feeds.bbci.co.uk/news/world/middle_east/rss.xml",
-    "Asia": "https://feeds.bbci.co.uk/news/world/asia/rss.xml",
-    "Americas": "https://feeds.bbci.co.uk/news/world/us_and_canada/rss.xml",
-    "Africa": "https://feeds.bbci.co.uk/news/world/africa/rss.xml",
+    "en": {
+        "World": "https://feeds.bbci.co.uk/news/world/rss.xml",
+        "Europe": "https://feeds.bbci.co.uk/news/world/europe/rss.xml",
+        "Middle East": "https://feeds.bbci.co.uk/news/world/middle_east/rss.xml",
+        "Asia": "https://feeds.bbci.co.uk/news/world/asia/rss.xml",
+        "Americas": "https://feeds.bbci.co.uk/news/world/us_and_canada/rss.xml",
+        "Africa": "https://feeds.bbci.co.uk/news/world/africa/rss.xml",
+    },
+    "fr": {
+        "Monde": "https://www.france24.com/fr/monde/rss",
+        "Europe": "https://www.france24.com/fr/europe/rss",
+        "Moyen-Orient": "https://www.france24.com/fr/moyen-orient/rss",
+        "Asie": "https://www.france24.com/fr/asie-pacifique/rss",
+        "Amériques": "https://www.france24.com/fr/ameriques/rss",
+        "Afrique": "https://www.france24.com/fr/afrique/rss",
+    }
 }
 
 def get_image(entry):
@@ -24,8 +34,10 @@ def get_image(entry):
         return content[0].get('url', '')
     return ''
 
-def get_news(region="World"):
-    url = RSS_FEEDS.get(region, RSS_FEEDS["World"])
+def get_news(region, lang):
+    feeds = RSS_FEEDS.get(lang, RSS_FEEDS["en"])
+    default = list(feeds.keys())[0]
+    url = feeds.get(region, feeds[default])
     feed = feedparser.parse(url)
     articles = []
     for entry in feed.entries[:5]:
@@ -38,28 +50,46 @@ def get_news(region="World"):
         })
     return articles
 
-def analyze_with_claude(articles):
+def analyze_with_claude(articles, lang):
     api_key = os.environ.get("ANTHROPIC_API_KEY")
     if not api_key:
         return None, "API key not set"
     client = anthropic.Anthropic(api_key=api_key)
     news_text = "\n\n".join([f"ARTICLE {i}:\nTITLE: {a['title']}\nSUMMARY: {a['summary']}" for i, a in enumerate(articles)])
-    message = client.messages.create(
-        model="claude-haiku-4-5-20251001",
-        max_tokens=3000,
-        messages=[{"role": "user", "content": f"""For each news article, provide two analyses.
+
+    if lang == "fr":
+        prompt = f"""Pour chaque article, fournis une analyse en FRANÇAIS.
+Retourne UNIQUEMENT un tableau JSON valide avec exactement {len(articles)} objets:
+[
+  {{
+    "index": 0,
+    "historical": "2-3 phrases reliant cet événement à un fait historique",
+    "lesson": "1 phrase sur ce que l'histoire nous apprend",
+    "kids_explanation": "Explique cette actualité en 2-3 phrases simples et fun pour un enfant de 10 ans. Ton amical, mots simples, un emoji sympa, RIEN de violent ou effrayant.",
+    "kids_fun_fact": "1 fait amusant qu'un enfant trouverait cool"
+  }}
+]
+ARTICLES:
+{news_text}"""
+    else:
+        prompt = f"""For each news article, provide analysis in ENGLISH.
 Return ONLY a valid JSON array with exactly {len(articles)} objects:
 [
   {{
     "index": 0,
     "historical": "2-3 sentences connecting this to a historical event",
-    "lesson": "1 sentence on what history teaches us about this",
-    "kids_explanation": "Explain this news in 2-3 fun simple sentences for a 10 year old. Use a friendly tone, simple words, a fun emoji, and NO scary or violent details. Focus on the positive or interesting angle.",
-    "kids_fun_fact": "1 fun related fact a kid would find cool or interesting"
+    "lesson": "1 sentence on what history teaches us",
+    "kids_explanation": "Explain in 2-3 fun simple sentences for a 10 year old. Friendly tone, simple words, fun emoji, NO scary details.",
+    "kids_fun_fact": "1 fun fact a kid would find cool"
   }}
 ]
 NEWS ARTICLES:
-{news_text}"""}]
+{news_text}"""
+
+    message = client.messages.create(
+        model="claude-haiku-4-5-20251001",
+        max_tokens=3000,
+        messages=[{"role": "user", "content": prompt}]
     )
     try:
         text = message.content[0].text
@@ -72,13 +102,14 @@ NEWS ARTICLES:
 
 @app.route("/")
 def index():
-    return render_template("index.html", regions=list(RSS_FEEDS.keys()))
+    return render_template("index.html")
 
 @app.route("/api/news")
 def api_news():
     region = request.args.get("region", "World")
-    articles = get_news(region)
-    analyses, error = analyze_with_claude(articles)
+    lang = request.args.get("lang", "en")
+    articles = get_news(region, lang)
+    analyses, error = analyze_with_claude(articles, lang)
     if error:
         return jsonify({"error": error})
     for i, article in enumerate(articles):
@@ -92,7 +123,7 @@ def api_news():
             article['lesson'] = ''
             article['kids_explanation'] = ''
             article['kids_fun_fact'] = ''
-    return jsonify({"articles": articles, "region": region})
+    return jsonify({"articles": articles, "region": region, "lang": lang})
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
