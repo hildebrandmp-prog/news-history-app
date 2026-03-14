@@ -3,8 +3,12 @@ import anthropic
 import feedparser
 import os
 import json
+import time
 
 app = Flask(__name__)
+
+cache = {}
+CACHE_DURATION = 1800
 
 RSS_FEEDS = {
     "en": {
@@ -56,39 +60,17 @@ def analyze_with_claude(articles, lang):
         return None, "API key not set"
     client = anthropic.Anthropic(api_key=api_key)
     news_text = "\n\n".join([f"ARTICLE {i}:\nTITLE: {a['title']}\nSUMMARY: {a['summary']}" for i, a in enumerate(articles)])
-
     if lang == "fr":
-        prompt = f"""Pour chaque article, fournis une analyse en FRANÇAIS.
-Retourne UNIQUEMENT un tableau JSON valide avec exactement {len(articles)} objets:
-[
-  {{
-    "index": 0,
-    "historical": "2-3 phrases reliant cet événement à un fait historique",
-    "lesson": "1 phrase sur ce que l'histoire nous apprend",
-    "kids_explanation": "Explique cette actualité en 2-3 phrases simples et fun pour un enfant de 10 ans. Ton amical, mots simples, un emoji sympa, RIEN de violent ou effrayant.",
-    "kids_fun_fact": "1 fait amusant qu'un enfant trouverait cool"
-  }}
-]
-ARTICLES:
-{news_text}"""
+        prompt = f"""Pour chaque article, analyse en FRANÇAIS. Retourne UNIQUEMENT un JSON valide:
+[{{"index":0,"historical":"2 phrases contexte historique","lesson":"1 phrase leçon","kids_explanation":"2 phrases fun pour enfant 10 ans sans rien d'effrayant","kids_fun_fact":"1 fait amusant"}}]
+ARTICLES:\n{news_text}"""
     else:
-        prompt = f"""For each news article, provide analysis in ENGLISH.
-Return ONLY a valid JSON array with exactly {len(articles)} objects:
-[
-  {{
-    "index": 0,
-    "historical": "2-3 sentences connecting this to a historical event",
-    "lesson": "1 sentence on what history teaches us",
-    "kids_explanation": "Explain in 2-3 fun simple sentences for a 10 year old. Friendly tone, simple words, fun emoji, NO scary details.",
-    "kids_fun_fact": "1 fun fact a kid would find cool"
-  }}
-]
-NEWS ARTICLES:
-{news_text}"""
-
+        prompt = f"""For each article, return ONLY valid JSON:
+[{{"index":0,"historical":"2 sentences historical context","lesson":"1 sentence lesson","kids_explanation":"2 fun sentences for 10 year old no scary details","kids_fun_fact":"1 fun fact"}}]
+ARTICLES:\n{news_text}"""
     message = client.messages.create(
         model="claude-haiku-4-5-20251001",
-        max_tokens=1500,
+        max_tokens=1000,
         messages=[{"role": "user", "content": prompt}]
     )
     try:
@@ -108,6 +90,10 @@ def index():
 def api_news():
     region = request.args.get("region", "World")
     lang = request.args.get("lang", "en")
+    cache_key = f"{lang}_{region}"
+    now = time.time()
+    if cache_key in cache and now - cache[cache_key]['time'] < CACHE_DURATION:
+        return jsonify(cache[cache_key]['data'])
     articles = get_news(region, lang)
     analyses, error = analyze_with_claude(articles, lang)
     if error:
@@ -123,7 +109,9 @@ def api_news():
             article['lesson'] = ''
             article['kids_explanation'] = ''
             article['kids_fun_fact'] = ''
-    return jsonify({"articles": articles, "region": region, "lang": lang})
+    result = {"articles": articles, "region": region, "lang": lang}
+    cache[cache_key] = {'data': result, 'time': now}
+    return jsonify(result)
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
