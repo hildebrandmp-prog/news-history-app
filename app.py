@@ -18,7 +18,7 @@ def get_news(region="World"):
     url = RSS_FEEDS.get(region, RSS_FEEDS["World"])
     feed = feedparser.parse(url)
     articles = []
-    for entry in feed.entries[:8]:
+    for entry in feed.entries[:5]:
         articles.append({
             "title": entry.get("title", ""),
             "summary": entry.get("summary", ""),
@@ -34,7 +34,7 @@ def analyze_with_claude(articles):
     client = anthropic.Anthropic(api_key=api_key)
     news_text = "\n\n".join([f"TITLE: {a['title']}\nSUMMARY: {a['summary']}" for a in articles])
     message = client.messages.create(
-        model="claude-opus-4-5",
+        model="claude-haiku-4-5-20251001",
         max_tokens=2000,
         messages=[{"role": "user", "content": f"""You are a brilliant history teacher and news analyst.
 Analyze these current international news articles and for each one:
