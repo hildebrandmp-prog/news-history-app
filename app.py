@@ -2,6 +2,7 @@ from flask import Flask, render_template, jsonify, request
 import anthropic
 import feedparser
 import os
+import json
 
 app = Flask(__name__)
 
@@ -14,6 +15,15 @@ RSS_FEEDS = {
     "Africa": "https://feeds.bbci.co.uk/news/world/africa/rss.xml",
 }
 
+def get_image(entry):
+    thumbs = entry.get('media_thumbnail', [])
+    if thumbs:
+        return thumbs[0].get('url', '')
+    content = entry.get('media_content', [])
+    if content:
+        return content[0].get('url', '')
+    return ''
+
 def get_news(region="World"):
     url = RSS_FEEDS.get(region, RSS_FEEDS["World"])
     feed = feedparser.parse(url)
@@ -23,7 +33,8 @@ def get_news(region="World"):
             "title": entry.get("title", ""),
             "summary": entry.get("summary", ""),
             "link": entry.get("link", ""),
-            "published": entry.get("published", "")
+            "published": entry.get("published", ""),
+            "image": get_image(entry)
         })
     return articles
 
@@ -32,20 +43,30 @@ def analyze_with_claude(articles):
     if not api_key:
         return None, "API key not set"
     client = anthropic.Anthropic(api_key=api_key)
-    news_text = "\n\n".join([f"TITLE: {a['title']}\nSUMMARY: {a['summary']}" for a in articles])
+    news_text = "\n\n".join([f"ARTICLE {i}:\nTITLE: {a['title']}\nSUMMARY: {a['summary']}" for i, a in enumerate(articles)])
     message = client.messages.create(
         model="claude-haiku-4-5-20251001",
         max_tokens=2000,
-        messages=[{"role": "user", "content": f"""You are a brilliant history teacher and news analyst.
-Analyze these current international news articles and for each one:
-1. Give a SHORT clear summary (2-3 sentences) in simple language
-2. Connect it to a HISTORICAL EVENT or context
-3. Explain WHY this matters today
-Use emojis to make it readable.
+        messages=[{"role": "user", "content": f"""For each news article, give a historical context analysis.
+Return ONLY a valid JSON array with exactly {len(articles)} objects:
+[
+  {{
+    "index": 0,
+    "historical": "2-3 sentences connecting this to a historical event or context",
+    "lesson": "1 sentence on what history teaches us about this"
+  }}
+]
 NEWS ARTICLES:
 {news_text}"""}]
     )
-    return message.content[0].text, None
+    try:
+        text = message.content[0].text
+        start = text.find('[')
+        end = text.rfind(']') + 1
+        analyses = json.loads(text[start:end])
+        return analyses, None
+    except:
+        return None, "Failed to parse analysis"
 
 @app.route("/")
 def index():
@@ -55,10 +76,17 @@ def index():
 def api_news():
     region = request.args.get("region", "World")
     articles = get_news(region)
-    analysis, error = analyze_with_claude(articles)
+    analyses, error = analyze_with_claude(articles)
     if error:
         return jsonify({"error": error})
-    return jsonify({"articles": articles, "analysis": analysis, "region": region})
+    for i, article in enumerate(articles):
+        if analyses and i < len(analyses):
+            article['historical'] = analyses[i].get('historical', '')
+            article['lesson'] = analyses[i].get('lesson', '')
+        else:
+            article['historical'] = ''
+            article['lesson'] = ''
+    return jsonify({"articles": articles, "region": region})
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
